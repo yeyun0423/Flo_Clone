@@ -1,58 +1,80 @@
 package com.example.flo
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.flo.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_FLO)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         initBottomNavigation()
 
+        // 클릭 시점에 song 객체 생성하도록 변경
+        binding.mainPlayerCl.setOnClickListener {
+            val song = Song(
+                binding.mainMiniplayerTitleTv.text.toString(),
+                binding.mainMiniplayerSingerTv.text.toString(),
+                0,
+                60,
+                false
+            )
+
+            val intent = Intent(this, SongActivity::class.java).apply {
+                putExtra("title", song.title)
+                putExtra("singer", song.singer)
+                putExtra("second", song.second)
+                putExtra("playTime", song.playTime)
+                putExtra("isPlaying", song.isPlaying)
+            }
+            startActivity(intent)
+        }
     }
 
-    private fun initBottomNavigation(){
-
+    private fun initBottomNavigation() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_frm, HomeFragment())
             .commitAllowingStateLoss()
 
-        binding.mainBnv.setOnItemSelectedListener{ item ->
+        binding.mainBnv.setOnItemSelectedListener { item ->
             when (item.itemId) {
-
                 R.id.homeFragment -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, HomeFragment())
                         .commitAllowingStateLoss()
-                    return@setOnItemSelectedListener true
+                    true
                 }
 
                 R.id.lookFragment -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, LookFragment())
                         .commitAllowingStateLoss()
-                    return@setOnItemSelectedListener true
+                    true
                 }
+
                 R.id.searchFragment -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, SearchFragment())
                         .commitAllowingStateLoss()
-                    return@setOnItemSelectedListener true
+                    true
                 }
+
                 R.id.lockerFragment -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, LockerFragment())
                         .commitAllowingStateLoss()
-                    return@setOnItemSelectedListener true
+                    true
                 }
+
+                else -> false
             }
-            false
         }
     }
 }
