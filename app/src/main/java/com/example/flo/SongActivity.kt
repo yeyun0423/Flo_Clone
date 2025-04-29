@@ -1,21 +1,22 @@
 package com.example.flo
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.flo.databinding.ActivitySongBinding
 
 class SongActivity : AppCompatActivity() {
-    lateinit var binding: ActivitySongBinding
-    private var mediaPlayer: MediaPlayer? = null
-    private lateinit var song: Song
+
+    private lateinit var binding: ActivitySongBinding
     private lateinit var timer: Timer
+    private var song: Song? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySongBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        song = SongDatabase.currentSong
 
         binding.songDownIb.setOnClickListener {
             finish()
@@ -29,39 +30,28 @@ class SongActivity : AppCompatActivity() {
             setPlayerStatus(true)
         }
 
-        // (랜덤 재생 버튼) 한곡 재생 버튼 클릭 시 스레드 재시작
         binding.songRandomIv.setOnClickListener {
             restartTimer()
         }
 
-        initSong()
-        setPlayer(song)
+        initPlayer()
+        startTimer()
     }
 
-    private fun initSong() {
-        if (intent.hasExtra("title") && intent.hasExtra("singer")) {
-            song = Song(
-                intent.getStringExtra("title")!!,
-                intent.getStringExtra("singer")!!,
-                intent.getIntExtra("second", 0),
-                intent.getIntExtra("playTime", 0),
-                intent.getBooleanExtra("isPlaying", false)
-            )
-            startTimer()
+    private fun initPlayer() {
+        song?.let {
+            binding.songMusicTitleTv.text = it.title
+            binding.songSingerNameTv.text = it.singer
+            binding.songEndTimeTv.text = formatTime(it.playTime)
+            binding.songStartTimeTv.text = formatTime(it.second)
+            binding.songProgressSb.max = it.playTime
+            binding.songProgressSb.progress = it.second
+            setPlayerStatus(it.isPlaying)
         }
     }
 
-    private fun setPlayer(song: Song) {
-        binding.songMusicTitleTv.text = intent.getStringExtra("title")!!
-        binding.songSingerNameTv.text = intent.getStringExtra("singer")!!
-        binding.songStartTimeTv.text = String.format("%02d:%02d", song.second / 60, song.second % 60)
-        binding.songEndTimeTv.text = String.format("%02d:%02d", song.playTime / 60, song.playTime % 60)
-        binding.songProgressSb.progress = (song.second * 1000 / song.playTime)
-        setPlayerStatus(song.isPlaying)
-    }
-
-    fun setPlayerStatus(isPlaying: Boolean) {
-        song.isPlaying = isPlaying
+    private fun setPlayerStatus(isPlaying: Boolean) {
+        song?.isPlaying = isPlaying
         if (::timer.isInitialized) {
             timer.isPlaying = isPlaying
         }
@@ -76,51 +66,65 @@ class SongActivity : AppCompatActivity() {
     }
 
     private fun startTimer() {
-        timer = Timer(song.playTime, song.isPlaying)
-        timer.start()
+        song?.let {
+            timer = Timer(it.playTime, it.isPlaying)
+            timer.start()
+        }
     }
 
     private fun restartTimer() {
         if (::timer.isInitialized) {
-            timer.interrupt() // 기존 타이머 중단
+            timer.interrupt()
         }
-        song.second = 0
-        binding.songProgressSb.progress = 0
+        song?.second = 0
         binding.songStartTimeTv.text = "00:00"
+        binding.songProgressSb.progress = 0
 
-        timer = Timer(song.playTime, true)
+        timer = Timer(song!!.playTime, true)
         timer.start()
     }
 
+    private fun formatTime(seconds: Int): String {
+        val min = seconds / 60
+        val sec = seconds % 60
+        return String.format("%02d:%02d", min, sec)
+    }
+
     inner class Timer(private val playTime: Int, var isPlaying: Boolean = true) : Thread() {
-        private var second: Int = 0
-        private var mills: Float = 0f
+        private var mills = 0f
 
         override fun run() {
-            super.run()
             try {
                 while (!isInterrupted) {
-                    if (second >= playTime) {
-                        break
-                    }
+                    if (song == null) break
+                    if (song!!.second >= playTime) break
+
                     if (isPlaying) {
                         sleep(50)
                         mills += 50
 
                         runOnUiThread {
-                            binding.songProgressSb.progress = ((mills / playTime) * 100).toInt()
+                            binding.songProgressSb.progress = ((mills / 1000).toInt())
                         }
+
                         if (mills % 1000 == 0f) {
+                            song!!.second++
                             runOnUiThread {
-                                binding.songStartTimeTv.text = String.format("%02d:%02d", second / 60, second % 60)
+                                binding.songStartTimeTv.text = formatTime(song!!.second)
                             }
-                            second++
                         }
                     }
                 }
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::timer.isInitialized) {
+            timer.interrupt()
         }
     }
 }

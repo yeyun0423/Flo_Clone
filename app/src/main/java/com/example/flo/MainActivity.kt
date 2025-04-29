@@ -4,15 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.flo.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityMainBinding
-    private var isPlaying: Boolean = false
-    private var currentSecond: Int = 0
-    private val totalDuration: Int = 60
+    private var isPlaying = false
+    private var currentSecond = 0
+    private val totalDuration = 60
 
     private val handler = Handler(Looper.getMainLooper())
     private val updateRunnable = object : Runnable {
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
                     handler.postDelayed(this, 1000)
                 } else {
                     isPlaying = false
-                    setPlayerStatus(false)
+                    togglePlayPauseUI()
                 }
             }
         }
@@ -38,20 +38,6 @@ class MainActivity : AppCompatActivity() {
 
         initBottomNavigation()
         initMiniplayer()
-
-        binding.mainMiniplayerBtn.setOnClickListener {
-            setPlayerStatus(true)
-            handler.post(updateRunnable)
-        }
-
-        binding.mainPauseBtn.setOnClickListener {
-            setPlayerStatus(false)
-            handler.removeCallbacks(updateRunnable)
-        }
-
-        binding.mainPlayerCl.setOnClickListener {
-            moveToSongActivity()
-        }
     }
 
     private fun initBottomNavigation() {
@@ -91,18 +77,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initMiniplayer() {
+        binding.mainMiniplayerBtn.setOnClickListener {
+            isPlaying = true
+            togglePlayPauseUI()
+            handler.post(updateRunnable)
+        }
+
+        binding.mainPauseBtn.setOnClickListener {
+            isPlaying = false
+            togglePlayPauseUI()
+            handler.removeCallbacks(updateRunnable)
+        }
+
+        binding.mainPlayerCl.setOnClickListener {
+            if (SongDatabase.currentSong == null) {
+                SongDatabase.currentSong = Song(
+                    binding.mainMiniplayerTitleTv.text.toString(),
+                    binding.mainMiniplayerSingerTv.text.toString(),
+                    currentSecond,
+                    totalDuration,
+                    isPlaying
+                )
+            } else {
+                SongDatabase.currentSong!!.second = currentSecond
+                SongDatabase.currentSong!!.isPlaying = isPlaying
+            }
+
+            val intent = Intent(this, SongActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.mainMiniplayerSb.max = totalDuration
         updateSeekBar()
     }
 
-    private fun setPlayerStatus(isPlaying: Boolean) {
-        this.isPlaying = isPlaying
+    private fun togglePlayPauseUI() {
         if (isPlaying) {
-            binding.mainMiniplayerBtn.visibility = View.GONE
-            binding.mainPauseBtn.visibility = View.VISIBLE
+            binding.mainMiniplayerBtn.visibility = android.view.View.GONE
+            binding.mainPauseBtn.visibility = android.view.View.VISIBLE
         } else {
-            binding.mainMiniplayerBtn.visibility = View.VISIBLE
-            binding.mainPauseBtn.visibility = View.GONE
+            binding.mainMiniplayerBtn.visibility = android.view.View.VISIBLE
+            binding.mainPauseBtn.visibility = android.view.View.GONE
         }
     }
 
@@ -110,30 +125,22 @@ class MainActivity : AppCompatActivity() {
         binding.mainMiniplayerSb.progress = currentSecond
         binding.mainMiniplayerStartTv.text = formatTime(currentSecond)
         binding.mainMiniplayerEndTv.text = formatTime(totalDuration)
-    }
 
-    private fun moveToSongActivity() {
-        val song = Song(
-            binding.mainMiniplayerTitleTv.text.toString(),
-            binding.mainMiniplayerSingerTv.text.toString(),
-            currentSecond,
-            totalDuration,
-            isPlaying
-        )
-
-        val intent = Intent(this, SongActivity::class.java)
-        intent.putExtra("title", song.title)
-        intent.putExtra("singer", song.singer)
-        intent.putExtra("second", song.second)
-        intent.putExtra("playTime", song.playTime)
-        intent.putExtra("isPlaying", song.isPlaying)
-        startActivity(intent)
+        SongDatabase.currentSong?.second = currentSecond
     }
 
     private fun formatTime(seconds: Int): String {
         val min = seconds / 60
         val sec = seconds % 60
         return String.format("%02d:%02d", min, sec)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        currentSecond = SongDatabase.currentSong?.second ?: 0
+        isPlaying = SongDatabase.currentSong?.isPlaying ?: false
+        updateSeekBar()
+        togglePlayPauseUI()
     }
 
     override fun onDestroy() {
