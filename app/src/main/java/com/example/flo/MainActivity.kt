@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var isPlaying = false
     private var currentSecond = 0
-    private val totalDuration = 60
+    private val totalDuration = 180
 
     private val handler = Handler(Looper.getMainLooper())
     private val updateRunnable = object : Runnable {
