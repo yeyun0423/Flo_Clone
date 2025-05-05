@@ -20,27 +20,45 @@
             android:layout_marginEnd="12dp" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_album_title"
-                android:text="노래 제목"
-                android:textStyle="bold"
-                android:textSize="14sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="노래 제목"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_album_singer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="가수"
                 android:textColor="#888888"
-                android:textSize="13sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:textSize="13sp" />
+
+
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_album_play"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/btn_miniplay_mvplay"
+            android:layout_marginEnd="12dp" />
+
+        <ImageView
+            android:id="@+id/iv_album_more"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="12dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/btn_player_more" />
     </LinearLayout>
 
     <!-- 구분선 -->

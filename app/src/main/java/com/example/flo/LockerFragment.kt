@@ -25,11 +25,11 @@ class LockerFragment : Fragment() {
 
         albumList = arrayListOf(
             Album("사랑이라 했던 말 속에서", "캔트비블루", R.drawable.img_album_exp2),
-            Album("somebody", "디오", R.drawable.img_album_exp2),
-            Album("pain", "하현상", R.drawable.img_album_exp2),
-            Album("O", "코드 쿤스트", R.drawable.img_album_exp2),
-            Album("Cruise", "BOYCOLD", R.drawable.img_album_exp2),
-            Album("55", "코드 쿤스트", R.drawable.img_album_exp2)
+            Album("somebody", "디오", R.drawable.img_album_exp3),
+            Album("pain", "하현상", R.drawable.img_album_exp4),
+            Album("O", "코드 쿤스트", R.drawable.img_album_exp5),
+            Album("Cruise", "BOYCOLD", R.drawable.img_album_exp6),
+            Album("55", "코드 쿤스트", R.drawable.img_album_exp)
         )
 
         lockerAdapter = LockerAdapter(albumList)
