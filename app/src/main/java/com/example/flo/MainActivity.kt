@@ -147,4 +147,24 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         handler.removeCallbacks(updateRunnable)
     }
+
+    fun updateMiniplayerUI() {
+        val song = SongDatabase.currentSong
+        if (song != null) {
+            binding.mainMiniplayerTitleTv.text = song.title
+            binding.mainMiniplayerSingerTv.text = song.singer
+            currentSecond = song.second
+            isPlaying = song.isPlaying
+            updateSeekBar()
+            togglePlayPauseUI()
+
+            // 바가 움직이도록 재생 타이머 시작
+            if (isPlaying) {
+                handler.removeCallbacks(updateRunnable)
+                handler.post(updateRunnable)
+            }
+        }
+    }
+
+
 }
