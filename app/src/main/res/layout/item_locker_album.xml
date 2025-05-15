@@ -43,7 +43,13 @@
 
 
         </LinearLayout>
-
+        <ImageView
+            android:id="@+id/btn_toggle"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="12dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/btn_toggle_off" />
         <ImageView
             android:id="@+id/iv_album_play"
             android:layout_width="30dp"

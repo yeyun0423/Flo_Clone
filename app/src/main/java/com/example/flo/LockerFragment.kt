@@ -30,6 +30,13 @@ class LockerFragment : Fragment() {
             Album("O", "코드 쿤스트", R.drawable.img_album_exp5),
             Album("Cruise", "BOYCOLD", R.drawable.img_album_exp6),
             Album("55", "코드 쿤스트", R.drawable.img_album_exp)
+           ,Album("다정히 내 이름을 부르면", "경서예지", R.drawable.img_album_exp2),
+            Album("한 페이지가 될 수 있게", "DAY6", R.drawable.img_album_exp3),
+            Album("좋아좋아", "조정석", R.drawable.img_album_exp4),
+            Album("비와 당신", "이무진", R.drawable.img_album_exp5),
+            Album("모든 날, 모든 순간", "폴킴", R.drawable.img_album_exp6),Album("헤어지자 말해요", "박재정", R.drawable.img_album_exp3),
+            Album("LOVE me", "BE'O", R.drawable.img_album_exp4),
+            Album("나의 X에게", "경서", R.drawable.img_album_exp6)
         )
 
         lockerAdapter = LockerAdapter(albumList)
@@ -37,4 +44,25 @@ class LockerFragment : Fragment() {
 
         return view
     }
+    override fun onResume() {
+        super.onResume()
+
+        albumList.clear()
+
+        val likedSongs = SongDatabase.getLikedSongs()
+        for (i in 0 until likedSongs.size) {
+            val song = likedSongs[i]
+            val album = Album(
+                title = song.title,
+                singer = song.singer,
+                coverImg = song.imageResId,
+                isToggled = false
+            )
+            albumList.add(album)
+        }
+
+        lockerAdapter.notifyDataSetChanged()
+    }
+
+
 }

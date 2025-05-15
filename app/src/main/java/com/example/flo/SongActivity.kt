@@ -34,8 +34,29 @@ class SongActivity : AppCompatActivity() {
             restartTimer()
         }
 
+        binding.songPreviousIv.setOnClickListener {
+            changeSong(false)
+        }
+
+        binding.songNextIv.setOnClickListener {
+            changeSong(true)
+        }
+
+        // 앨범 이미지 설정
+        val resId = intent.getIntExtra("resId", R.drawable.img_album_exp2)
+        binding.songAlbumIv.setImageResource(resId)
+
         initPlayer()
         startTimer()
+        updateLikeUI()
+
+        binding.songLikeIv.setOnClickListener {
+            song?.let {
+                it.isLike = !it.isLike
+                SongDatabase.updateLikeStatus(it.id, it.isLike)
+                updateLikeUI()
+            }
+        }
     }
 
     private fun initPlayer() {
@@ -67,7 +88,7 @@ class SongActivity : AppCompatActivity() {
 
     private fun startTimer() {
         song?.let {
-            timer = Timer(it.playTime, it.isPlaying)
+            timer = Timer(it.playTime, it.isPlaying, it.second)
             timer.start()
         }
     }
@@ -80,8 +101,11 @@ class SongActivity : AppCompatActivity() {
         binding.songStartTimeTv.text = "00:00"
         binding.songProgressSb.progress = 0
 
-        timer = Timer(song!!.playTime, true)
+        timer = Timer(song!!.playTime, true, 0)
         timer.start()
+
+        song?.isPlaying = true
+        setPlayerStatus(true)
     }
 
     private fun formatTime(seconds: Int): String {
@@ -90,8 +114,72 @@ class SongActivity : AppCompatActivity() {
         return String.format("%02d:%02d", min, sec)
     }
 
-    inner class Timer(private val playTime: Int, var isPlaying: Boolean = true) : Thread() {
-        private var mills = 0f
+    private fun updateLikeUI() {
+        val isLiked = song?.isLike ?: false
+        if (isLiked) {
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_on)
+        } else {
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_off)
+        }
+    }
+
+    private fun changeSong(next: Boolean) {
+        val songList = SongDatabase.getSongs()
+        val currentSong = song
+        if (currentSong == null || songList.isEmpty()) return
+
+        val currentIndex = songList.indexOfFirst { it.id == currentSong.id }
+        if (currentIndex == -1) return
+
+        val newIndex = if (next) {
+            (currentIndex + 1) % songList.size
+        } else {
+            if (currentIndex - 1 < 0) songList.size - 1 else currentIndex - 1
+        }
+
+        // 곡 변경
+        song = songList[newIndex]
+        SongDatabase.currentSong = song
+
+        // 재생 상태 초기화
+        song?.second = 0
+        song?.isPlaying = true
+
+        // 타이머 정지
+        if (::timer.isInitialized) {
+            timer.interrupt()
+        }
+
+        // UI 초기화
+        binding.songStartTimeTv.text = "00:00"
+        binding.songProgressSb.progress = 0
+        binding.songProgressSb.max = song!!.playTime
+
+        // 앨범 이미지도 같이 변경
+        binding.songAlbumIv.setImageResource(song!!.imageResId)
+
+        timer = Timer(song!!.playTime, true, 0)
+        timer.start()
+
+        initPlayer()
+        setPlayerStatus(true)
+        updateLikeUI()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::timer.isInitialized) {
+            timer.interrupt()
+        }
+    }
+
+    inner class Timer(
+        private val playTime: Int,
+        var isPlaying: Boolean = true,
+        startSecond: Int = 0
+    ) : Thread() {
+        private var mills = (startSecond * 1000).toFloat()
+        private var nextWholeSecond = startSecond + 1
 
         override fun run() {
             try {
@@ -104,27 +192,23 @@ class SongActivity : AppCompatActivity() {
                         mills += 50
 
                         runOnUiThread {
-                            binding.songProgressSb.progress = ((mills / 1000).toInt())
+                            binding.songProgressSb.progress = (mills / 1000).toInt()
                         }
 
-                        if (mills % 1000 == 0f) {
+                        if (mills >= nextWholeSecond * 1000) {
                             song!!.second++
+                            nextWholeSecond++
                             runOnUiThread {
                                 binding.songStartTimeTv.text = formatTime(song!!.second)
                             }
                         }
+                    } else {
+                        sleep(100)
                     }
                 }
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (::timer.isInitialized) {
-            timer.interrupt()
         }
     }
 }

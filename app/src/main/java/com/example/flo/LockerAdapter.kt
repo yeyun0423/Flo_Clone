@@ -15,6 +15,7 @@ class LockerAdapter(private val albumList: ArrayList<Album>) :
         val title: TextView = view.findViewById(R.id.tv_album_title)
         val singer: TextView = view.findViewById(R.id.tv_album_singer)
         val moreBtn: ImageView = view.findViewById(R.id.iv_album_more)
+        val toggleBtn: ImageView = view.findViewById(R.id.btn_toggle)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,6 +30,19 @@ class LockerAdapter(private val albumList: ArrayList<Album>) :
         holder.title.text = album.title
         holder.singer.text = album.singer
 
+
+        holder.toggleBtn.setImageResource(
+            if (album.isToggled) R.drawable.btn_toggle_on else R.drawable.btn_toggle_off
+        )
+
+        holder.toggleBtn.setOnClickListener {
+            album.isToggled = !album.isToggled
+            holder.toggleBtn.setImageResource(
+                if (album.isToggled) R.drawable.btn_toggle_on else R.drawable.btn_toggle_off
+            )
+        }
+
+        // 삭제 버튼 클릭 시 해당 아이템 삭제
         holder.moreBtn.setOnClickListener {
             val pos = holder.adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
