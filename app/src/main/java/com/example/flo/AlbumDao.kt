@@ -1,0 +1,24 @@
+package com.example.flo
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+
+@Dao
+interface AlbumDao {
+
+    @Insert
+    fun insert(album: Album)
+
+    @Query("SELECT * FROM AlbumTable")
+    fun getAllAlbums(): List<Album>
+
+    @Query("SELECT * FROM AlbumTable WHERE isLiked = 1")
+    fun getLikedAlbums(): List<Album>
+
+    @Query("SELECT COUNT(*) FROM AlbumTable")
+    fun count(): Int
+
+    @Query("UPDATE AlbumTable SET isLiked = :isLiked WHERE id = :albumId")
+    fun updateLikeStatus(albumId: Int, isLiked: Boolean)
+}

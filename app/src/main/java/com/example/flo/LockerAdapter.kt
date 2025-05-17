@@ -7,8 +7,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class LockerAdapter(private val albumList: ArrayList<Album>) :
+class LockerAdapter(albumList: List<Album>) :
     RecyclerView.Adapter<LockerAdapter.ViewHolder>() {
+
+    private val albumList = ArrayList(albumList)
+
+
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val albumImage: ImageView = view.findViewById(R.id.iv_album_cover)
@@ -30,7 +34,6 @@ class LockerAdapter(private val albumList: ArrayList<Album>) :
         holder.title.text = album.title
         holder.singer.text = album.singer
 
-
         holder.toggleBtn.setImageResource(
             if (album.isToggled) R.drawable.btn_toggle_on else R.drawable.btn_toggle_off
         )
@@ -42,7 +45,6 @@ class LockerAdapter(private val albumList: ArrayList<Album>) :
             )
         }
 
-        // 삭제 버튼 클릭 시 해당 아이템 삭제
         holder.moreBtn.setOnClickListener {
             val pos = holder.adapterPosition
             if (pos != RecyclerView.NO_POSITION) {

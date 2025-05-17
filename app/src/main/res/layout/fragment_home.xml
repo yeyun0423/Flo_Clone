@@ -268,7 +268,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="LILAC"
+                        android:text="사랑이라 했던 말 속에서"
                         android:layout_marginTop="10dp"
                         android:textSize="16sp"
                         android:textColor="@color/black"/>
@@ -277,7 +277,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="아이유 (IU)"
+                        android:text="캔트비블루"
                         android:textSize="13sp"
                         android:textColor="#a8a8a8"/>
 
@@ -290,16 +290,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:orientation="vertical">
+
                     <ImageView
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/img_album_exp"
-                        />
+                        android:src="@drawable/img_album_exp3" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="제목"
+                        android:text="somebody"
                         android:layout_marginTop="10dp"
                         android:textSize="16sp"
                         android:textColor="@color/black"/>
@@ -308,7 +309,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="가수명"
+                        android:text="디오"
                         android:textSize="13sp"
                         android:textColor="#a8a8a8"/>
 
@@ -321,27 +322,28 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:orientation="vertical">
+
                     <ImageView
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/img_album_exp"
-                        />
+                        android:src="@drawable/img_album_exp4" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="제목"
                         android:layout_marginTop="10dp"
-                        android:textSize="16sp"
-                        android:textColor="@color/black"/>
+                        android:text="pain"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="가수명"
-                        android:textSize="13sp"
-                        android:textColor="#a8a8a8"/>
+                        android:text="하현상"
+                        android:textColor="#a8a8a8"
+                        android:textSize="13sp" />
 
 
                 </LinearLayout>

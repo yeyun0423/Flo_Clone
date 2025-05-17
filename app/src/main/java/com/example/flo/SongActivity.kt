@@ -2,6 +2,9 @@ package com.example.flo
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.flo.databinding.ActivitySongBinding
 
@@ -10,11 +13,14 @@ class SongActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongBinding
     private lateinit var timer: Timer
     private var song: Song? = null
+    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySongBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        db = AppDatabase.getInstance(applicationContext)
 
         song = SongDatabase.currentSong
 
@@ -42,7 +48,6 @@ class SongActivity : AppCompatActivity() {
             changeSong(true)
         }
 
-        // 앨범 이미지 설정
         val resId = intent.getIntExtra("resId", R.drawable.img_album_exp2)
         binding.songAlbumIv.setImageResource(resId)
 
@@ -53,8 +58,10 @@ class SongActivity : AppCompatActivity() {
         binding.songLikeIv.setOnClickListener {
             song?.let {
                 it.isLike = !it.isLike
-                SongDatabase.updateLikeStatus(it.id, it.isLike)
+                // Room DB 좋아요 상태 업데이트
+                db.albumDao().updateLikeStatus(it.id, it.isLike)
                 updateLikeUI()
+                showLikeToast(it.isLike)
             }
         }
     }
@@ -137,25 +144,20 @@ class SongActivity : AppCompatActivity() {
             if (currentIndex - 1 < 0) songList.size - 1 else currentIndex - 1
         }
 
-        // 곡 변경
         song = songList[newIndex]
         SongDatabase.currentSong = song
 
-        // 재생 상태 초기화
         song?.second = 0
         song?.isPlaying = true
 
-        // 타이머 정지
         if (::timer.isInitialized) {
             timer.interrupt()
         }
 
-        // UI 초기화
         binding.songStartTimeTv.text = "00:00"
         binding.songProgressSb.progress = 0
         binding.songProgressSb.max = song!!.playTime
 
-        // 앨범 이미지도 같이 변경
         binding.songAlbumIv.setImageResource(song!!.imageResId)
 
         timer = Timer(song!!.playTime, true, 0)
@@ -164,6 +166,27 @@ class SongActivity : AppCompatActivity() {
         initPlayer()
         setPlayerStatus(true)
         updateLikeUI()
+    }
+
+    private fun showLikeToast(isLiked: Boolean) {
+        val layoutInflater = layoutInflater
+        val view = layoutInflater.inflate(R.layout.toast_custom, null)
+
+        val toastImage = view.findViewById<ImageView>(R.id.toast_iv)
+        val toastText = view.findViewById<TextView>(R.id.toast_tv)
+
+        if (isLiked) {
+            toastImage.setImageResource(R.drawable.ic_my_like_on)
+            toastText.text = "좋아요를 눌렀어요"
+        } else {
+            toastImage.setImageResource(R.drawable.ic_my_like_off)
+            toastText.text = "좋아요를 취소했어요"
+        }
+
+        val toast = Toast(applicationContext)
+        toast.view = view
+        toast.duration = Toast.LENGTH_SHORT
+        toast.show()
     }
 
     override fun onDestroy() {
@@ -188,26 +211,23 @@ class SongActivity : AppCompatActivity() {
                     if (song!!.second >= playTime) break
 
                     if (isPlaying) {
-                        sleep(50)
-                        mills += 50
+                        mills += 100f
+                        val currentSecond = (mills / 1000).toInt()
+                        song!!.second = currentSecond
 
-                        runOnUiThread {
-                            binding.songProgressSb.progress = (mills / 1000).toInt()
-                        }
-
-                        if (mills >= nextWholeSecond * 1000) {
-                            song!!.second++
+                        if (currentSecond >= nextWholeSecond) {
                             nextWholeSecond++
                             runOnUiThread {
-                                binding.songStartTimeTv.text = formatTime(song!!.second)
+                                binding.songStartTimeTv.text = formatTime(currentSecond)
+                                binding.songProgressSb.progress = currentSecond
                             }
                         }
-                    } else {
-                        sleep(100)
                     }
+
+                    sleep(100)
                 }
             } catch (e: InterruptedException) {
-                e.printStackTrace()
+                // 스레드 중단 시 예외 처리 없음
             }
         }
     }

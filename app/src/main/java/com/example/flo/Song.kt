@@ -1,5 +1,6 @@
 package com.example.flo
 
+//song.kt
 data class Song(
     var id: Int = 0,
     val title : String = "",
@@ -9,6 +10,8 @@ data class Song(
     var isPlaying: Boolean = false,
     var music: String = " ",
     val imageResId: Int= R.drawable.img_album_exp2,
+    var albumIdx: Int,
     var isLike: Boolean = false
+
 )
 
