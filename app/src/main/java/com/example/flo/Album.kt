@@ -9,5 +9,6 @@ data class Album(
     var singer: String = "",
     var coverImg: Int = 0,
     var isToggled: Boolean = false,
-    var isLiked: Boolean = false
+    var isLiked: Boolean = false,
+    var isChecked: Boolean = false
 )

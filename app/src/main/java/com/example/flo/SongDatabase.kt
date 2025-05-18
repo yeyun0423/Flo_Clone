@@ -31,9 +31,11 @@ object SongDatabase {
         }
     }
 
-
     // 좋아요한 곡 목록만 반환하는 함수
     fun getLikedSongs(): List<Song> {
         return songList.filter { it.isLike }
+    }
+    fun clearAllLikes() {
+        songList.forEach { it.isLike = false }
     }
 }

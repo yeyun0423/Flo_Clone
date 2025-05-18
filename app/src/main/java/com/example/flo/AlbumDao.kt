@@ -21,4 +21,7 @@ interface AlbumDao {
 
     @Query("UPDATE AlbumTable SET isLiked = :isLiked WHERE id = :albumId")
     fun updateLikeStatus(albumId: Int, isLiked: Boolean)
+
+    @Query("UPDATE AlbumTable SET isLiked = 0")
+    fun updateAllIsLikeFalse(): Int
 }

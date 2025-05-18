@@ -5,13 +5,23 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.room.Room
 import com.example.flo.databinding.ActivityMainBinding
+import com.example.flo.databinding.BottomSheetDialogBinding
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import android.util.Log
+
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var bottomSheetBinding: BottomSheetDialogBinding
+
     private var isPlaying = false
     private var currentSecond = 0
     private var totalDuration = 0
@@ -41,27 +51,48 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "flo-db"
-        ).allowMainThreadQueries().build()
-
+        db = AppDatabase.getInstance(applicationContext)
         albumDao = db.albumDao()
-        val albums = albumDao.getAllAlbums()
 
         initBottomNavigation()
         insertDummySongs()
+        initMiniplayer()
+        initMiniplayerButtons()
+        initBottomSheetLikeDeleteListener()
 
         val firstSong = SongDatabase.currentSong ?: SongDatabase.getSongs().firstOrNull()
         if (firstSong != null) {
             SongDatabase.currentSong = firstSong
             totalDuration = firstSong.playTime
         }
-
-        initMiniplayer()
-        initMiniplayerButtons()
     }
+
+    private fun initBottomSheetLikeDeleteListener() {
+        val editBarLayout = findViewById<View>(R.id.editBarLayout)
+        val deleteAllBtn = editBarLayout.findViewById<LinearLayout>(R.id.deleteAllBtn)
+
+        deleteAllBtn.setOnClickListener {
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    albumDao.updateAllIsLikeFalse()
+                    val check = albumDao.getLikedAlbums()
+                    Log.d("MainActivity", "삭제 후 DB liked album 수: ${check.size}")
+                }
+
+                val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_frm)
+                val lockerFragment = navHostFragment?.childFragmentManager?.fragments
+                    ?.find { it is LockerFragment } as? LockerFragment
+
+                // 좋아요 프래그먼트를 완전히 새로 생성해서 붙이기
+                lockerFragment?.childFragmentManager?.beginTransaction()
+                    ?.replace(R.id.lockerContentFrame, MyLikeFragment())
+                    ?.commitAllowingStateLoss()
+            }
+        }
+    }
+
+
+
 
     private fun initBottomNavigation() {
         supportFragmentManager.beginTransaction()
@@ -238,19 +269,8 @@ class MainActivity : AppCompatActivity() {
     private fun insertDummySongs() {
         val dummySongs = listOf(
             Song(1, "사랑이라 했던 말 속에서", "캔트비블루", 0, 180, false, "music1.mp3", R.drawable.img_album_exp2, 1),
-            Song(2, "somebody", "디오", 0, 200, false, "music2.mp3", R.drawable.img_album_exp3, 2),
-            Song(3, "pain", "하현상", 0, 240, false, "music3.mp3", R.drawable.img_album_exp4, 3),
-            Song(4, "O", "코드 쿤스트", 0, 180, false, "music4.mp3", R.drawable.img_album_exp5, 4),
-            Song(5, "Cruise", "BOYCOLD", 0, 200, false, "music5.mp3", R.drawable.img_album_exp6, 5),
-            Song(6, "55", "코드 쿤스트", 0, 210, false, "music6.mp3", R.drawable.img_album_exp, 6),
-            Song(7, "다정히 내 이름을 부르면", "경서예지", 0, 230, false, "music7.mp3", R.drawable.img_album_exp2, 7),
-            Song(8, "한 페이지가 될 수 있게", "DAY6", 0, 220, false, "music8.mp3", R.drawable.img_album_exp3, 8),
-            Song(9, "좋아좋아", "조정석", 0, 190, false, "music9.mp3", R.drawable.img_album_exp4, 9),
-            Song(10, "비와 당신", "이무진", 0, 205, false, "music10.mp3", R.drawable.img_album_exp5, 10),
-            Song(11, "모든 날, 모든 순간", "폴킴", 0, 215, false, "music11.mp3", R.drawable.img_album_exp6, 11),
-            Song(12, "헤어지자 말해요", "박재정", 0, 225, false, "music12.mp3", R.drawable.img_album_exp3, 12),
-            Song(13, "LOVE me", "BE'O", 0, 200, false, "music13.mp3", R.drawable.img_album_exp4, 13),
-            Song(14, "나의 X에게", "경서", 0, 210, false, "music14.mp3", R.drawable.img_album_exp6, 14)
+            Song(2, "somebody", "디오", 0, 190, false, "music2.mp3", R.drawable.img_album_exp3, 2),
+            Song(3, "pain", "하현상", 0, 200, false, "music3.mp3", R.drawable.img_album_exp4, 3)
         )
         SongDatabase.addSongs(dummySongs)
     }

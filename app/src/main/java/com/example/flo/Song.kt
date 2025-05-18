@@ -11,7 +11,7 @@ data class Song(
     var music: String = " ",
     val imageResId: Int= R.drawable.img_album_exp2,
     var albumIdx: Int,
-    var isLike: Boolean = false
-
+    var isLike: Boolean = false,
+    var isChecked: Boolean = false
 )
 

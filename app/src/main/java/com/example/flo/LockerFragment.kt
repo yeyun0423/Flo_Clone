@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.flo.MyLikeFragment
+import android.util.Log
 
 
 
 class LockerFragment : Fragment() {
-
+    private var myLikeFragment: MyLikeFragment? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -21,6 +23,8 @@ class LockerFragment : Fragment() {
 
         val tabList = view.findViewById<TextView>(R.id.lockerTabListTv)
         val tabLike = view.findViewById<TextView>(R.id.lockerTabLikeTv)
+
+
 
         val db = AppDatabase.getInstance(requireContext())
 
@@ -36,8 +40,6 @@ class LockerFragment : Fragment() {
             )
         }
 
-
-
         childFragmentManager.beginTransaction()
             .replace(R.id.lockerContentFrame, MyListFragment())
             .commit()
@@ -50,13 +52,18 @@ class LockerFragment : Fragment() {
         }
 
         tabLike.setOnClickListener {
+            val fragment = MyLikeFragment()
+
+            Log.d("LockerFragment", "MyLikeFragment 완전 새로 생성 및 붙이기")
             childFragmentManager.beginTransaction()
-                .replace(R.id.lockerContentFrame, MyLikeFragment())
+                .replace(R.id.lockerContentFrame, fragment)
                 .commit()
         }
 
+
         return view
     }
+
 }
 
 

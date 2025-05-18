@@ -6,13 +6,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import android.util.Log
 
 class LockerAdapter(albumList: List<Album>) :
     RecyclerView.Adapter<LockerAdapter.ViewHolder>() {
 
     private val albumList = ArrayList(albumList)
-
-
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val albumImage: ImageView = view.findViewById(R.id.iv_album_cover)
@@ -53,7 +52,18 @@ class LockerAdapter(albumList: List<Album>) :
                 notifyItemRangeChanged(pos, albumList.size)
             }
         }
+
+
     }
 
+
     override fun getItemCount(): Int = albumList.size
+
+
+    fun updateList(newList: List<Album>) {
+        Log.d("LockerAdapter", "updateList 실행됨, 새 리스트 크기: ${newList.size}")
+        albumList.clear()
+        albumList.addAll(newList)
+        notifyDataSetChanged()
+    }
 }
