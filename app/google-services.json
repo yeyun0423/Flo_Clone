@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "288161460706",
+    "project_id": "th-flo",
+    "storage_bucket": "th-flo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:288161460706:android:cd52ada15f906a2ab549bb",
+        "android_client_info": {
+          "package_name": "com.example.flo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVmnsTfdueKSwdOkUbI-2CWnPn0NgIIMU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

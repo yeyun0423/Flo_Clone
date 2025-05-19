@@ -58,12 +58,26 @@ class SongActivity : AppCompatActivity() {
         binding.songLikeIv.setOnClickListener {
             song?.let {
                 it.isLike = !it.isLike
-                // Room DB 좋아요 상태 업데이트
-                db.albumDao().updateLikeStatus(it.id, it.isLike)
+
+                // Firebase 저장 로직
+                val firebase = com.google.firebase.database.FirebaseDatabase.getInstance()
+                val likeRef = firebase.getReference("likes")
+                val userId = "test_user"
+
+                if (it.isLike) {
+                    likeRef.child(userId).child(it.id.toString()).setValue(true)
+                } else {
+                    likeRef.child(userId).child(it.id.toString()).removeValue()
+                }
+
                 updateLikeUI()
                 showLikeToast(it.isLike)
+
+               /* // Room DB 저장
+                db.albumDao().updateLikeStatus(it.id, it.isLike)*/
             }
         }
+
     }
 
     private fun initPlayer() {
@@ -188,6 +202,7 @@ class SongActivity : AppCompatActivity() {
         toast.duration = Toast.LENGTH_SHORT
         toast.show()
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
