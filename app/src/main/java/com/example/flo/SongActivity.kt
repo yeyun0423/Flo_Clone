@@ -60,6 +60,7 @@ class SongActivity : AppCompatActivity() {
                 it.isLike = !it.isLike
 
                 // Firebase 저장 로직
+                /*
                 val firebase = com.google.firebase.database.FirebaseDatabase.getInstance()
                 val likeRef = firebase.getReference("likes")
                 val userId = "test_user"
@@ -69,12 +70,13 @@ class SongActivity : AppCompatActivity() {
                 } else {
                     likeRef.child(userId).child(it.id.toString()).removeValue()
                 }
+                */
+
+                // Room DB로 저장
+                db.albumDao().updateLikeStatus(it.id, it.isLike)
 
                 updateLikeUI()
                 showLikeToast(it.isLike)
-
-               /* // Room DB 저장
-                db.albumDao().updateLikeStatus(it.id, it.isLike)*/
             }
         }
 

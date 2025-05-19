@@ -20,7 +20,7 @@ import android.util.Log
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-/*    private lateinit var bottomSheetBinding: BottomSheetDialogBinding*/
+
 
     private var isPlaying = false
     private var currentSecond = 0
@@ -47,6 +47,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // jwt 확인
+        val userId = SharedPrefsUtil.getJwt(this)
+        if (userId == -1) {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+
+        // 로그인 되어있다면 메인 로직 계속 진행
         setTheme(R.style.Theme_FLO)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -66,6 +77,7 @@ class MainActivity : AppCompatActivity() {
             totalDuration = firstSong.playTime
         }
     }
+
 
     private fun initBottomSheetLikeDeleteListener() {
         val editBarLayout = findViewById<View>(R.id.editBarLayout)

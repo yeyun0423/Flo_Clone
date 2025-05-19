@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import android.util.Log
-import com.google.firebase.database.FirebaseDatabase
+
 
 class LockerFragment : Fragment() {
 
@@ -34,24 +34,36 @@ class LockerFragment : Fragment() {
                 Album(id = 3, title = "pain", singer = "하현상", coverImg = R.drawable.img_album_exp4)
             )
         }
+        /*
+         // Firebase에서 좋아요 상태 동기화
+         val firebase = FirebaseDatabase.getInstance()
+         val likeRef = firebase.getReference("likes")
+         val userId = "test_user"
 
-        // Firebase에서 좋아요 상태 동기화
-        val firebase = FirebaseDatabase.getInstance()
-        val likeRef = firebase.getReference("likes")
-        val userId = "test_user"
+         likeRef.child(userId).get().addOnSuccessListener { snapshot ->
+             val likedIds = snapshot.children.mapNotNull { it.key?.toIntOrNull() }.toSet()
+             val albumList = db.albumDao().getAllAlbums()
+             albumList.forEach { it.isLiked = it.id in likedIds }
+             albumList.forEach { db.albumDao().updateLikeStatus(it.id, it.isLiked) }
+             Log.d("LockerFragment", "Firebase에서 좋아요 상태 동기화 완료")
 
-        likeRef.child(userId).get().addOnSuccessListener { snapshot ->
-            val likedIds = snapshot.children.mapNotNull { it.key?.toIntOrNull() }.toSet()
-            val albumList = db.albumDao().getAllAlbums()
-            albumList.forEach { it.isLiked = it.id in likedIds }
-            albumList.forEach { db.albumDao().updateLikeStatus(it.id, it.isLiked) }
-            Log.d("LockerFragment", "Firebase에서 좋아요 상태 동기화 완료")
+             // 동기화가 끝난 후에 프래그먼트 표시!
+             childFragmentManager.beginTransaction()
+                 .replace(R.id.lockerContentFrame, MyListFragment())
+                 .commit()
+         }
+ */
 
-            //동기화가 끝난 후에 프래그먼트 표시!
-            childFragmentManager.beginTransaction()
-                .replace(R.id.lockerContentFrame, MyListFragment())
-                .commit()
+        // RoomDB에서 바로 프래그먼트 표시
+        val albumList = db.albumDao().getAllAlbums()
+        albumList.forEach {
+            Log.d("LockerFragment", "Album: ${it.title}, isLiked: ${it.isLiked}")
         }
+
+        childFragmentManager.beginTransaction()
+            .replace(R.id.lockerContentFrame, MyListFragment())
+            .commit()
+
 
         // 리스트 탭 클릭 시 다시 MyListFragment 보여주기
         tabList.setOnClickListener {
