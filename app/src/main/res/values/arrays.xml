@@ -1,0 +1,8 @@
+<resources>
+    <string-array name="email_domain_array">
+        <item>직접입력</item>
+        <item>gmail.com</item>
+        <item>naver.com</item>
+        <item>daum.net</item>
+    </string-array>
+</resources>

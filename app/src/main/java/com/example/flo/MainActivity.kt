@@ -20,7 +20,7 @@ import android.util.Log
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var bottomSheetBinding: BottomSheetDialogBinding
+/*    private lateinit var bottomSheetBinding: BottomSheetDialogBinding*/
 
     private var isPlaying = false
     private var currentSecond = 0
