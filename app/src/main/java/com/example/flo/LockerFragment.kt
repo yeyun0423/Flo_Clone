@@ -19,16 +19,28 @@ class LockerFragment : Fragment() {
 
         val tabList = view.findViewById<TextView>(R.id.lockerTabListTv)
         val tabLike = view.findViewById<TextView>(R.id.lockerTabLikeTv)
+        val tabSave = view.findViewById<TextView>(R.id.lockerTabSavedTv)
+
 
         val db = AppDatabase.getInstance(requireContext())
 
         // 기본 더미 데이터 생성
         if (db.albumDao().count() == 0) {
             db.albumDao().insert(
-                Album(id = 1, title = "사랑이라 했던 말 속에서", singer = "캔트비블루", coverImg = R.drawable.img_album_exp2)
+                Album(
+                    id = 1,
+                    title = "사랑이라 했던 말 속에서",
+                    singer = "캔트비블루",
+                    coverImg = R.drawable.img_album_exp2
+                )
             )
             db.albumDao().insert(
-                Album(id = 2, title = "somebody", singer = "디오", coverImg = R.drawable.img_album_exp3)
+                Album(
+                    id = 2,
+                    title = "somebody",
+                    singer = "디오",
+                    coverImg = R.drawable.img_album_exp3
+                )
             )
             db.albumDao().insert(
                 Album(id = 3, title = "pain", singer = "하현상", coverImg = R.drawable.img_album_exp4)
@@ -79,6 +91,12 @@ class LockerFragment : Fragment() {
                 .replace(R.id.lockerContentFrame, fragment)
                 .commit()
         }
+        tabSave.setOnClickListener {
+            childFragmentManager.beginTransaction()
+                .replace(R.id.lockerContentFrame, MySaveFragment())
+                .commit()
+        }
+
 
         return view
     }
