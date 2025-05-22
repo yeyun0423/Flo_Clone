@@ -12,9 +12,15 @@
         android:layout_height="35dp"
         android:layout_marginEnd="15dp"
         android:src="@drawable/ic_my_like_off"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="visible"
+        android:elevation="8dp"
+        android:contentDescription="좋아요 버튼"
         app:layout_constraintBottom_toBottomOf="@+id/album_more_iv"
         app:layout_constraintEnd_toStartOf="@+id/album_more_iv"
         app:layout_constraintTop_toTopOf="@+id/album_more_iv" />
+
 
     <ImageView
         android:id="@+id/album_more_iv"

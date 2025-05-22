@@ -26,6 +26,7 @@ class HomeFragment : Fragment() {
             adapter = HomeAdapter(albumList) { album ->
                 val albumFragment = AlbumFragment().apply {
                     arguments = Bundle().apply {
+                        putInt("albumId", album.id)
                         putString("title", album.title)
                         putString("singer", album.singer)
                         putInt("coverImg", album.coverImg)

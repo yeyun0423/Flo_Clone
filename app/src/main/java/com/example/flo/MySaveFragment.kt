@@ -1,34 +1,47 @@
 package com.example.flo
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.flo.databinding.FragmentMysaveBinding
 
 class MySaveFragment : Fragment() {
-    private lateinit var adapter: LockerAdapter
-    private lateinit var recyclerView: RecyclerView
+
+    private lateinit var binding: FragmentMysaveBinding
     private lateinit var db: AppDatabase
+    private lateinit var lockerAdapter: LockerAdapter
+    private val userId = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_mysave, container, false)
-
+    ): View {
+        binding = FragmentMysaveBinding.inflate(inflater, container, false)
         db = AppDatabase.getInstance(requireContext())
 
-        recyclerView = view.findViewById(R.id.rv_locker_album)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        setupRecyclerView()
+        loadLikedAlbums()
 
-        val albums = db.albumDao().getAllAlbums()
-        adapter = LockerAdapter(albums)
-        recyclerView.adapter = adapter
-        return view
+        return binding.root
+    }
+
+    private fun setupRecyclerView() {
+        lockerAdapter = LockerAdapter(emptyList())
+        binding.rvAlbumList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = lockerAdapter
+        }
+    }
+
+    private fun loadLikedAlbums() {
+        val likedAlbumIds = db.likeDao().getLikedAlbumIds(userId)
+        val likedAlbums = likedAlbumIds.mapNotNull { albumId ->
+            db.albumDao().getAlbumById(albumId)
+        }
+
+        lockerAdapter.updateList(likedAlbums)
     }
 }

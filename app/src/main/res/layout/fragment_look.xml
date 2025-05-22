@@ -1,16 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="look"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:orientation="vertical"
+        android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- 상단 타이틀 -->
+        <TextView
+            android:id="@+id/lookTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="둘러보기"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 탭 영역 -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- 탭: 차트 -->
+                <TextView
+                    android:id="@+id/tabChart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="차트"
+                    android:textColor="#FFFFFF"
+                    android:background="#3E5EFF"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- 탭: 영상 -->
+                <TextView
+                    android:id="@+id/tabVideo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="영상"
+                    android:textColor="#888888"
+                    android:background="#EEEEEE"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- 탭: 장르 -->
+                <TextView
+                    android:id="@+id/tabGenre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="장르"
+                    android:textColor="#888888"
+                    android:background="#EEEEEE"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- 탭: 상황 -->
+                <TextView
+                    android:id="@+id/tabSituation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="상황"
+                    android:textColor="#888888"
+                    android:background="#EEEEEE"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- 탭: 분위기 -->
+
+                <!-- 탭: 오디오북 -->
+                <TextView
+                    android:id="@+id/tabMood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="#EEEEEE"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp"
+                    android:text="분위기"
+                    android:textColor="#888888" />
+
+                <TextView
+                    android:id="@+id/tabAudio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="오디오북"
+                    android:textColor="#888888"
+                    android:background="#EEEEEE"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- 섹션 타이틀 -->
+        <TextView
+            android:id="@+id/chartSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="차트"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp" />
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="150dp"
+    android:padding="10dp"
+    android:layout_marginBottom="4dp">
+
+    <!-- 앨범 커버 -->
+    <ImageView
+        android:id="@+id/iv_album_cover"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="앨범 커버"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- 노래 제목 -->
+    <TextView
+        android:id="@+id/tv_album_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Butter"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintStart_toEndOf="@id/iv_album_cover"
+        app:layout_constraintTop_toTopOf="@id/iv_album_cover"
+        app:layout_constraintEnd_toStartOf="@id/btn_player_play" />
+
+    <!-- 가수 및 발매일, 장르 -->
+    <TextView
+        android:id="@+id/tv_album_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="방탄소년단 (BTS) | 2021.03.25 | 장르: 댄스 팝"
+        android:textSize="13sp"
+        android:textColor="#888888"
+        android:maxLines="1"
+        android:layout_marginTop="2dp"
+        app:layout_constraintStart_toStartOf="@id/tv_album_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_album_title"
+        app:layout_constraintEnd_toEndOf="@id/tv_album_title" />
+
+    <!-- 재생 버튼 -->
+    <ImageView
+        android:id="@+id/btn_player_play"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/btn_player_play"
+        android:contentDescription="Play"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toStartOf="@id/btn_player_more"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- 더보기 버튼 -->
+    <ImageView
+        android:id="@+id/btn_player_more"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/btn_player_more"
+        android:contentDescription="More"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

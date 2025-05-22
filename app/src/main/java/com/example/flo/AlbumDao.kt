@@ -24,4 +24,8 @@ interface AlbumDao {
 
     @Query("UPDATE AlbumTable SET isLiked = 0")
     fun updateAllIsLikeFalse(): Int
+
+    @Query("SELECT * FROM AlbumTable WHERE id = :albumId")
+    fun getAlbumById(albumId: Int): Album?
+
 }
