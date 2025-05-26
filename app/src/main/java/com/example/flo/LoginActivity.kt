@@ -4,58 +4,56 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.network.*
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), LoginView {
 
-    private lateinit var emailInput: EditText
-    private lateinit var emailDomainSpinner: Spinner
-    private lateinit var passwordInput: EditText
-    private lateinit var loginBtn: Button
-    private lateinit var db: AppDatabase
-    private lateinit var signUpBtn: TextView
+    private lateinit var authService: AuthService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        emailInput = findViewById(R.id.emailInput)
-        emailDomainSpinner = findViewById(R.id.emailDomainSpinner)
-        passwordInput = findViewById(R.id.passwordInput)
-        loginBtn = findViewById(R.id.loginBtn)
-        signUpBtn = findViewById(R.id.signUpText)
+        authService = AuthService()
 
-        db = AppDatabase.getInstance(this)
+        val emailInput = findViewById<EditText>(R.id.emailInput)
+        val emailDomainSpinner = findViewById<Spinner>(R.id.emailDomainSpinner)
+        val passwordInput = findViewById<EditText>(R.id.passwordInput)
+        val loginBtn = findViewById<Button>(R.id.loginBtn)
+        val signUpBtn = findViewById<TextView>(R.id.signUpText)
 
         loginBtn.setOnClickListener {
             val email = emailInput.text.toString().trim()
             val domain = emailDomainSpinner.selectedItem.toString()
-            val password = passwordInput.text.toString().trim()
-            val fullEmail = if (domain == "직접입력") email else "$email@$domain"
+            val fullEmail = "$email@$domain"
+            val password = passwordInput.text.toString()
 
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "모든 항목을 입력해주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val user = db.userDao().getUser(fullEmail, password)
-
-            if (user != null) {
-                //  JWT(=userIdx) 저장
-                val prefs = getSharedPreferences("auth", MODE_PRIVATE)
-                prefs.edit().putInt("jwt", user.id).apply()
-
-                Toast.makeText(this, "로그인 성공!", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            } else {
-                Toast.makeText(this, "이메일 또는 비밀번호가 잘못되었습니다.", Toast.LENGTH_SHORT).show()
-            }
+            val request = LoginRequest(fullEmail, password)
+            authService.login(request, this)
         }
+
         signUpBtn.setOnClickListener {
-            val intent = Intent(this, SignUpActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, SignUpActivity::class.java))
             finish()
         }
-        }
-
     }
+
+    override fun onLoginSuccess(response: LoginResponse) {
+        val accessToken = response.result?.accessToken ?: ""
+        val prefs = getSharedPreferences("auth", MODE_PRIVATE)
+        prefs.edit().putString("jwt", accessToken).apply()
+
+        Toast.makeText(this, "로그인 성공!", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
+    override fun onLoginFailure(message: String) {
+        Toast.makeText(this, "로그인 실패: $message", Toast.LENGTH_SHORT).show()
+    }
+}
