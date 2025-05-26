@@ -1,10 +1,5 @@
 package com.example.network
 
-import com.example.network.LoginRequest
-import com.example.network.LoginResponse
-import com.example.network.RegisterRequest
-import com.example.network.RegisterResponse
-import com.example.network.TokenTestResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET

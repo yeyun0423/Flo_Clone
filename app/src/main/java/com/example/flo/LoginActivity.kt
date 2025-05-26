@@ -2,6 +2,7 @@ package com.example.flo
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.network.*
@@ -9,6 +10,7 @@ import com.example.network.*
 class LoginActivity : AppCompatActivity(), LoginView {
 
     private lateinit var authService: AuthService
+    private val TAG = "LoginActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +35,8 @@ class LoginActivity : AppCompatActivity(), LoginView {
                 return@setOnClickListener
             }
 
+            Log.d(TAG, "로그인 요청: email=$fullEmail, password=$password")
+
             val request = LoginRequest(fullEmail, password)
             authService.login(request, this)
         }
@@ -44,16 +48,35 @@ class LoginActivity : AppCompatActivity(), LoginView {
     }
 
     override fun onLoginSuccess(response: LoginResponse) {
-        val accessToken = response.result?.accessToken ?: ""
+        Log.d(TAG, "로그인 응답 성공: $response")
+
+        val result = response.result
+        if (result == null) {
+            Log.e(TAG, "로그인 결과가 null입니다.")
+            Toast.makeText(this, "로그인 실패: 결과 누락", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val accessToken = result.accessToken
+        Log.d(TAG, "받은 accessToken: $accessToken")
+
         val prefs = getSharedPreferences("auth", MODE_PRIVATE)
         prefs.edit().putString("jwt", accessToken).apply()
 
         Toast.makeText(this, "로그인 성공!", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+
+        try {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        } catch (e: Exception) {
+            Log.e(TAG, "MainActivity로 이동 중 오류", e)
+            Toast.makeText(this, "메인 화면 이동 중 오류 발생", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onLoginFailure(message: String) {
+        Log.e(TAG, "로그인 실패: $message")
         Toast.makeText(this, "로그인 실패: $message", Toast.LENGTH_SHORT).show()
     }
 }

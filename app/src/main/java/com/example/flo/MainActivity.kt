@@ -1,25 +1,20 @@
 package com.example.flo
 
 import android.content.Intent
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import com.example.flo.databinding.ActivityMainBinding
 import androidx.lifecycle.lifecycleScope
+import com.example.flo.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import android.util.Log
-
-
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
 
     private var isPlaying = false
     private var currentSecond = 0
@@ -47,16 +42,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // jwt 확인
-        val userId = SharedPrefsUtil.getJwt(this)
-        if (userId == -1) {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+        // accessToken(jwt) 존재 확인
+        val token = SharedPrefsUtil.getJwt(this)
+        if (token.isNullOrEmpty()) {
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
         }
 
-        // 로그인 되어있다면 메인 로직 계속 진행
         setTheme(R.style.Theme_FLO)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -77,7 +70,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun initBottomSheetLikeDeleteListener() {
         val editBarLayout = findViewById<View>(R.id.editBarLayout)
         val deleteAllBtn = editBarLayout.findViewById<LinearLayout>(R.id.deleteAllBtn)
@@ -94,16 +86,12 @@ class MainActivity : AppCompatActivity() {
                 val lockerFragment = navHostFragment?.childFragmentManager?.fragments
                     ?.find { it is LockerFragment } as? LockerFragment
 
-                // 좋아요 프래그먼트를 완전히 새로 생성해서 붙이기
                 lockerFragment?.childFragmentManager?.beginTransaction()
                     ?.replace(R.id.lockerContentFrame, MyLikeFragment())
                     ?.commitAllowingStateLoss()
             }
         }
     }
-
-
-
 
     private fun initBottomNavigation() {
         supportFragmentManager.beginTransaction()

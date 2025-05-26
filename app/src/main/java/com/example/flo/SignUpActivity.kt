@@ -39,9 +39,9 @@ class SignUpActivity : AppCompatActivity(), SignUpView {
                 return@setOnClickListener
             }
 
-            // 이름은 빈 문자열로 처리 (API 필수 아님)
+
             val request = RegisterRequest(
-                name = "",
+                name = "test",
                 email = fullEmail,
                 password = password
             )
