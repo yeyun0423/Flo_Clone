@@ -1,6 +1,6 @@
 package com.example.network
 
-import com.example.flo.RegisterResult
+import com.example.flo.model.response.RegisterResult
 
 data class RegisterResponse(
     val isSuccess: Boolean,

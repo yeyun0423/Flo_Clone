@@ -1,6 +1,6 @@
 package com.example.network
 
-import com.example.flo.LoginResult
+import com.example.flo.model.response.LoginResult
 
 data class LoginResponse(
     val isSuccess: Boolean,
