@@ -20,13 +20,12 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        db = AppDatabase.Companion.getInstance(requireContext())
+        db = AppDatabase.getInstance(requireContext())
 
         val albumList = db.albumDao().getAllAlbums()
 
         binding.homeTodayMusicOverseaHs.apply {
-            layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = HomeAdapter(albumList) { album ->
                 val albumFragment = AlbumFragment().apply {
                     arguments = Bundle().apply {
@@ -42,6 +41,14 @@ class HomeFragment : Fragment() {
                     .addToBackStack(null)
                     .commit()
             }
+        }
+
+        // 설정 버튼 클릭 시 ProfileFragment로 이동
+        binding.homePannelBtnSettingIv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, ProfileFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         return binding.root
