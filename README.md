@@ -14,6 +14,6 @@
 
 - **언어**: Kotlin  
 - **아키텍처**: MVVM  
-- **UI**: RecyclerView, Fragment, ViewBinding, Jetpack Compose  
+- **UI**: RecyclerView, Fragment, ViewBinding
 - **DB/Storage**: Room Database, Firebase Realtime Database  
 - **IDE**: Android Studio
