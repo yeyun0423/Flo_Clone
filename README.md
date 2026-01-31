@@ -17,3 +17,4 @@
 - **UI**: RecyclerView, Fragment, ViewBinding
 - **DB/Storage**: Room Database, Firebase Realtime Database  
 - **IDE**: Android Studio
+- 
